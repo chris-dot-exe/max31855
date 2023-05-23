@@ -1,4 +1,4 @@
-module github.com/lukechannings/max31855
+module github.com/chris-dot-exe/max31855
 
 go 1.20
 
