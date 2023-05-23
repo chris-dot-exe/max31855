@@ -4,8 +4,8 @@ import (
 	"errors"
 	"fmt"
 
-	"periph.io/x/periph/conn/physic"
-	"periph.io/x/periph/conn/spi"
+	"periph.io/x/conn/v3/physic"
+	"periph.io/x/conn/v3/spi"
 )
 
 // ErrOpenCircuit - Thermocouple is not connected
@@ -78,6 +78,8 @@ func (d *Dev) GetTemp() (Temp, error) {
 	// 12bit unsigned integer stored in 16bit unsigned integer
 	internalwordU12 := ((uint16(raw[2]) << 8) | uint16(raw[3])) >> 4
 	internalWord := int16(internalwordU12<<4) / 16 // convert to 16bit signed integer
+
+	internal.Set(fmt.Sprintf("%fC", float64(internalWord)*0.0625))
 
 	temp := Temp{
 		Internal:     internal,
