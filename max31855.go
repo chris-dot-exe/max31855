@@ -69,10 +69,15 @@ func (d *Dev) GetTemp() (Temp, error) {
 	var internal physic.Temperature
 	var thermocouple physic.Temperature
 
-	thermocoupleWord := ((uint16(raw[0]) << 8) | uint16(raw[1])) >> 2
-	thermocouple.Set(fmt.Sprintf("%fC", float64(int16(thermocoupleWord))*0.25))
-	internalWord := ((uint16(raw[2]) << 8) | uint16(raw[3])) >> 4
-	internal.Set(fmt.Sprintf("%fC", float64(int16(internalWord))*0.0625))
+	// 14bit unsigned integer stored in 16bit unsigned integer
+	thermocouplewordU14 := ((uint16(raw[0]) << 8) | uint16(raw[1])) >> 2
+	thermocoupleWord := int16(thermocouplewordU14<<2) / 4 //convert to 16bit signed integer
+
+	thermocouple.Set(fmt.Sprintf("%fC", float64(thermocoupleWord)*0.25))
+
+	// 12bit unsigned integer stored in 16bit unsigned integer
+	internalwordU12 := ((uint16(raw[2]) << 8) | uint16(raw[3])) >> 4
+	internalWord := int16(internalwordU12<<4) / 16 // convert to 16bit signed integer
 
 	temp := Temp{
 		Internal:     internal,
